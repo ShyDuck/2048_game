@@ -1,0 +1,116 @@
+#![enable(implicit_some)]
+// Detailed field information can be found at https://docs.amethyst.rs/master/amethyst_ui/enum.UiWidget.html and related pages
+Container(
+    transform: (
+        id: "background",
+        anchor: Middle,
+        stretch: XY( x_margin: 0., y_margin: 0., keep_aspect_ratio: false),
+        width: 20.,
+        height: 20.,
+    ),
+    background: SolidColor(0.03, 0.03, 0.03, 1.0),
+    children: [
+
+        Container(
+            transform: (
+                id: "container_4x4",
+                y: 210,
+                width: 755.,
+                height: 150.,
+                anchor: Middle,
+            ),
+            background: SolidColor(0.03, 0.03, 0.03, 1.0),
+            children: [
+
+                Label(
+                    transform: (
+                        id: "4x4",
+                        width: 750.,
+                        height: 145.,
+                        tab_order: 1,
+                        anchor: Middle,
+                        mouse_reactive: false,
+                    ),
+                    text: (
+                        text: "DO YOU WANNA LEAVE?",
+                        font_size: 75.,
+                        color: (1.0, 0.65, 0., 1.0), // ffa500
+                        font: File("font/square.ttf", ("TTF", ())),
+                    )
+                ),
+            ]
+        ),
+
+
+        Container(
+            transform: (
+                id: "container_yes",
+                y: 50,
+                width: 755.,
+                height: 150.,
+                anchor: Middle,
+            ),
+            background: SolidColor(1.0, 0.65, 0.0, 1.0),
+            children: [
+
+                // Complex Button
+                Button(
+                    transform: (
+                        id: "yes",
+                        width: 750.,
+                        height: 145.,
+                        tab_order: 3,
+                        anchor: Middle,
+                        mouse_reactive: true,
+                    ),
+                    button: (
+                        text: "YES",
+                        font: File("font/square.ttf", ("TTF", ())),
+                        font_size: 75.,
+                        normal_text_color: (1.0, 0.65, 0., 1.0), // ffa500
+                        normal_image: SolidColor(0., 0., 0., 1.),
+                        hover_image: SolidColor(0.1, 0.1, 0.1, 1.),
+                        press_image: SolidColor(0.15, 0.15, 0.15, 1.),
+                    )
+                ),
+            ]
+        ),
+
+
+        Container(
+            transform: (
+                id: "container_no",
+                y: -110,
+                width: 755.,
+                height: 150.,
+                anchor: Middle,
+            ),
+            background: SolidColor(1.0, 0.65, 0.0, 1.0),
+            children: [
+
+                // Complex Button
+                Button(
+                    transform: (
+                        id: "no",
+                        width: 750.,
+                        height: 145.,
+                        tab_order: 3,
+                        anchor: Middle,
+                        mouse_reactive: true,
+                    ),
+                    button: (
+                        text: "NO",
+                        font: File("font/square.ttf", ("TTF", ())),
+                        font_size: 75.,
+                        normal_text_color: (1.0, 0.65, 0., 1.0), // ffa500
+                        normal_image: SolidColor(0., 0., 0., 1.),
+                        hover_image: SolidColor(0.1, 0.1, 0.1, 1.),
+                        press_image: SolidColor(0.15, 0.15, 0.15, 1.),
+                    )
+                ),
+            ]
+        ),
+
+
+    ],
+)
