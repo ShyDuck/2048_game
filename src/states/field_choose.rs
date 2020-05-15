@@ -12,6 +12,7 @@ use amethyst::{
 };
 
 use crate::states::exit;
+use crate::states::game;
 
 const BUTTON_4X4: &str = "4x4";
 const BUTTON_6X6: &str = "6x6";
@@ -68,7 +69,7 @@ impl SimpleState for FieldChooseState{
             }) => {
                 if Some(target) == self.button_4x4 {
                     println!("[Trans::Switch] Switching to GameState, 4x4!");
-                    return Trans::None;
+                    return Trans::Switch(Box::new(game::GameState::default()));
                 }
                 if Some(target) == self.button_6x6 {
                     println!("[Trans::Switch] Switching to GameState, 6x6!");

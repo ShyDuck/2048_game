@@ -6,6 +6,8 @@ edition = "2018"
 
 [dependencies]
 amethyst = "0.15.0"
+ron = "0.5.1"
+serde = "1.0.110"
 
 [features]
 default = ["vulkan"]
