@@ -11,6 +11,7 @@ use amethyst::{
 };
 use std::fmt::{Debug};
 use crate::states::exit;
+use crate::states::pause_menu;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use ron;
@@ -30,9 +31,10 @@ impl Default for FieldSize{
 
 #[derive( Default, Deserialize, Serialize, Debug)]
 pub struct Field{
-    size: FieldSize,
-    field_4 : Option<[[u32; 4]; 4]>,
-    field_6 : Option<[[u32; 6]; 6]>,
+    pub score: u32,
+    pub size: FieldSize,
+    pub field_4 : Option<[[u32; 4]; 4]>,
+    pub field_6 : Option<[[u32; 6]; 6]>,
 }
 
 #[derive(Default)]
@@ -44,17 +46,15 @@ pub struct GameState{
 impl SimpleState for GameState {
     fn on_start(&mut self, _data: StateData<'_, GameData<'_, '_>>){
        self.read_from_save();
-       println!("{:?}", self.field);
+       println!("starting new game with: {:?}", self.field);
     }
 
     fn on_pause(&mut self, _data: StateData<'_, GameData<'_, '_>>){
         self.write_to_save();
-        println!("{:?}", self.field);
     }
 
     fn on_resume(&mut self, _data: StateData<'_, GameData<'_, '_>>){
         self.read_from_save();
-        println!("{:?}", self.field);
     }
 
     fn on_stop(&mut self, _data: StateData<'_, GameData<'_, '_>>){
@@ -65,8 +65,6 @@ impl SimpleState for GameState {
                 None => (),
             },
         }
-        
-        println!("{:?}", self.field);
     }
 
     fn handle_event(&mut self, _data: StateData<'_, GameData<'_, '_>>, event: StateEvent) -> SimpleTrans{
@@ -75,11 +73,9 @@ impl SimpleState for GameState {
                 if is_close_requested(&event) {
                     println!("[Trans::Push] GameState => ExitState, krestik");
                     return Trans::Push(Box::new(exit::ExitState::default()));
-                }else if is_key_down(&event, VirtualKeyCode::P) {
-                    return Trans::None;
                 }else if is_key_down(&event, VirtualKeyCode::Escape) {
-                    println!("[Trans::Push] From GameState to ExitState");
-                    return Trans::Push(Box::new(exit::ExitState::default()));
+                    println!("[Trans::Push] From GameState to PauseMenu");
+                    return Trans::Push(Box::new(pause_menu::PauseMenuState::default()));
                 }else{
                     return Trans::None;
                 }

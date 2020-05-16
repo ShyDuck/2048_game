@@ -14,6 +14,7 @@ use amethyst::{
 
 use crate::states::field_choose;
 use crate::states::exit;
+use crate::states::game;
 const BUTTON_START: &str = "start";
 const BUTTON_CONTINUE: &str = "continue";
 const BUTTON_LEADER_BOARD: &str = "leader_board";
@@ -73,12 +74,12 @@ impl SimpleState for MainMenuState{
                 target,
             }) => {
                 if Some(target) == self.button_start {
-                    println!("[Trans::Switch] Switching to GameState, StartNewGame!");
+                    println!("[Trans::Push] Switching to FieldChooseState, button_start!");
                     return Trans::Push(Box::new(field_choose::FieldChooseState::default()));
                 }
                 if Some(target) == self.button_continue {
                     println!("[Trans::Switch] Switching to GameState, LoadingGame!");
-                    return Trans::None;
+                    return Trans::Switch(Box::new(game::GameState::default()));
                 }
                 if Some(target) == self.button_leader_board {
                     println!("[Trans::Switch] Switching to LeaderBoardState!");

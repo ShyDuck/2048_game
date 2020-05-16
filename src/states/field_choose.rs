@@ -13,7 +13,6 @@ use amethyst::{
 
 use crate::states::exit;
 use crate::states::game;
-
 const BUTTON_4X4: &str = "4x4";
 const BUTTON_6X6: &str = "6x6";
 const BUTTON_BACK: &str = "back";
@@ -69,11 +68,32 @@ impl SimpleState for FieldChooseState{
             }) => {
                 if Some(target) == self.button_4x4 {
                     println!("[Trans::Switch] Switching to GameState, 4x4!");
+                    let new_field : game::Field = game::Field{
+                        score: 0,
+                        size: game::FieldSize::Four,
+                        field_4: Some([[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 0]]),
+                        field_6: None,
+                    };
+                    std::fs::write("save.ron", ron::ser::to_string(&new_field).unwrap()).expect("some problem with writing new 4x4 field");
                     return Trans::Switch(Box::new(game::GameState::default()));
                 }
                 if Some(target) == self.button_6x6 {
                     println!("[Trans::Switch] Switching to GameState, 6x6!");
-                    return Trans::None;
+                    let new_field : game::Field = game::Field{
+                        score: 0,
+                        size: game::FieldSize::Four,
+                        field_4: None,
+                        field_6: Some([
+                            [0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0],
+                        ]),
+                    };
+                    std::fs::write("save.ron", ron::ser::to_string(&new_field).unwrap()).expect("some problem with writing new 6x6 field");
+                    return Trans::Switch(Box::new(game::GameState::default()));
                 }
                 if Some(target) == self.button_back {
                     println!("[Trans::Pop] Returning to MainMenuState, button back!");

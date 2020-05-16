@@ -1,4 +1,4 @@
 (
   title: "2048_game",
-  dimensions: Some((1000, 700)),
+  dimensions: Some((1200, 800)),
 )
