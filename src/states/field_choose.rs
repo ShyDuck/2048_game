@@ -37,7 +37,7 @@ impl SimpleState for FieldChooseState{
         if self.button_4x4.is_none()
             || self.button_6x6.is_none()
             || self.button_back.is_none(){
-                    world.exec(|ui_finder : UiFinder| {
+                world.exec(|ui_finder : UiFinder| {
                     self.button_back = ui_finder.find(BUTTON_BACK);
                     self.button_4x4 = ui_finder.find(BUTTON_4X4);
                     self.button_6x6 = ui_finder.find(BUTTON_6X6);
@@ -71,7 +71,7 @@ impl SimpleState for FieldChooseState{
                     let new_field : game::Field = game::Field{
                         score: 0,
                         size: game::FieldSize::Four,
-                        field_4: Some([[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 0]]),
+                        field_4: Some([[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 2]]),
                         field_6: None,
                     };
                     std::fs::write("save.ron", ron::ser::to_string(&new_field).unwrap()).expect("some problem with writing new 4x4 field");
@@ -89,7 +89,7 @@ impl SimpleState for FieldChooseState{
                             [0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 2],
                         ]),
                     };
                     std::fs::write("save.ron", ron::ser::to_string(&new_field).unwrap()).expect("some problem with writing new 6x6 field");

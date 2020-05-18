@@ -5,6 +5,7 @@ name = "2048_game"
 version = "0.1.0"
 dependencies = [
  "amethyst",
+ "rand 0.7.3",
  "ron",
  "serde",
 ]

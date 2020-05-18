@@ -1,0 +1,43 @@
+#![enable(implicit_some)]
+// Detailed field information can be found at https://docs.amethyst.rs/master/amethyst_ui/enum.UiWidget.html and related pages
+Container(
+    transform: (
+        id: "background",
+        anchor: Middle,
+        stretch:  NoStretch,
+        width: 0.,
+        height: 0.,
+    ),
+    background: SolidColor(0.03, 0.03, 0.03, 1.0),
+    children: [
+        Container(
+            transform: (
+                id: "container_score_text",
+                y: 400,
+                width: 755.,
+                height: 100.,
+                anchor: Middle,
+            ),
+            background: SolidColor(0.03, 0.03, 0.03, 1.0),
+            children: [
+
+                Label(
+                    transform: (
+                        id: "score",
+                        width: 750.,
+                        height: 100.,
+                        tab_order: 1,
+                        anchor: Middle,
+                        mouse_reactive: false,
+                    ),
+                    text: (
+                        text: "YOUR SCORE : ",
+                        font_size: 75.,
+                        color: (1.0, 0.65, 0., 1.0), 
+                        font: File("font/square.ttf", ("TTF", ())),
+                    )
+                ),
+            ]
+        ),
+    ],
+)    

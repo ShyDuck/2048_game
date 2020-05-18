@@ -68,9 +68,9 @@ pub struct PauseMenuState{
 
      fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans{
         let StateData {world, ..} = data;
-        if self.button_new_game == None
-            || self.button_return == None
-            || self.button_to_menu == None{
+        if self.button_new_game.is_none()
+            || self.button_return.is_none()
+            || self.button_to_menu.is_none(){
                 world.exec(|ui_finder: UiFinder<'_>|{
                     self.button_new_game = ui_finder.find(BUTTON_NEW_GAME);
                     self.button_return = ui_finder.find(BUTTON_RETURN);
