@@ -12,8 +12,11 @@ use amethyst::{
     input::{InputBundle, StringBindings},
     ui::{RenderUi, UiBundle},
     utils::application_root_dir,
+    audio::AudioBundle,
 };
 
+use amethyst::audio::DjSystemDesc;
+pub mod audio;
 
 mod states;
 use states::main_menu::MainMenuState;
@@ -40,7 +43,13 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(TransformBundle::new())?
         .with_bundle(InputBundle::<StringBindings>::new())?
         .with_bundle(UiBundle::<StringBindings>::new())?
-        .with_bundle(HotReloadBundle::default())?;
+        .with_bundle(AudioBundle::default())?
+        .with_bundle(HotReloadBundle::default())?
+        .with_system_desc(
+            DjSystemDesc::new(|music: &mut audio::Music| music.music.next()),
+            "dj_system",
+            &[],
+        );
     let mut game = Application::new(assets_dir, MainMenuState::default(), game_data)?;
     game.run();
 

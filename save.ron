@@ -1,1 +1,9 @@
-(score:0,size:Four,field_4:Some(((2,0,2,4,),(0,0,8,8,),(2,16,8,4,),(8,64,128,256,),)),field_6:None,)
+(
+    skip: false,
+    hard: false,
+    loose: false,
+    score: 78,
+    size: Four,
+    field_4: Some(((0, 2, 0, 2), (0, 0, 2, 4), (0, 2, 4, 8), (2, 4, 16, 32))),
+    field_6: None,
+)

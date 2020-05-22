@@ -1,0 +1,142 @@
+#![enable(implicit_some)]
+// Detailed field information can be found at https://docs.amethyst.rs/master/amethyst_ui/enum.UiWidget.html and related pages
+Container(
+    transform: (
+        id: "background",
+        anchor: Middle,
+        stretch: NoStretch,
+        width: 0.,
+        height: 0.,
+    ),
+    background: SolidColor(0.03, 0.03, 0.03, 1.0),
+    children: [
+
+        Container(
+            transform: (
+                id: "container_text_4_e",
+                y: 100,
+                width: 500.,
+                height: 350.,
+                anchor: TopLeft,
+            ),
+            background: SolidColor(0.03, 0.03, 0.03, 1.0),
+            children: [
+
+                Label(
+                    transform: (
+                        id: "text_4_e",
+                        width: 500.,
+                        height: 350.,
+                        tab_order: 1,
+                        anchor: TopLeft,
+                        mouse_reactive: false,
+                    ),
+                    text: (
+                        text: "",
+                        font_size: 50.,
+                        color: (1.0, 0.65, 0., 1.0), // ffa500
+                        font: File("font/square.ttf", ("TTF", ())),
+                        line_mode: Wrap,
+                        align: TopLeft,
+                    )
+                ),
+            ]
+        ),
+
+        Container(
+            transform: (
+                id: "container_text_4_h",
+                y: 100,
+                width: 500.,
+                height: 350.,
+                anchor: TopRight,
+            ),
+            background: SolidColor(0.03, 0.03, 0.03, 1.0),
+            children: [
+
+                Label(
+                    transform: (
+                        id: "text_4_h",
+                        width: 500.,
+                        height: 350.,
+                        tab_order: 1,
+                        anchor: TopRight,
+                        mouse_reactive: false,
+                    ),
+                    text: (
+                        text: "",
+                        font_size: 50.,
+                        color: (1.0, 0.65, 0., 1.0), // ffa500
+                        font: File("font/square.ttf", ("TTF", ())),
+                        line_mode: Wrap,
+                        align: TopRight,
+                    )
+                ),
+            ]
+        ),
+
+        Container(
+            transform: (
+                id: "container_text_6_e",
+                y: -100,
+                width: 500.,
+                height: 350.,
+                anchor: BottomLeft,
+            ),
+            background: SolidColor(0.03, 0.03, 0.03, 1.0),
+            children: [
+
+                Label(
+                    transform: (
+                        id: "text_6_e",
+                        width: 500.,
+                        height: 350.,
+                        tab_order: 1,
+                        anchor: BottomLeft,
+                        mouse_reactive: false,
+                    ),
+                    text: (
+                        text: "",
+                        font_size: 50.,
+                        color: (1.0, 0.65, 0., 1.0), // ffa500
+                        font: File("font/square.ttf", ("TTF", ())),
+                        line_mode: Wrap,
+                        align: BottomLeft,
+                    )
+                ),
+            ]
+        ),
+
+        Container(
+            transform: (
+                id: "container_text_6_h",
+                y: -100,
+                width: 500.,
+                height: 350.,
+                anchor: BottomRight,
+            ),
+            background: SolidColor(0.03, 0.03, 0.03, 1.0),
+            children: [
+
+                Label(
+                    transform: (
+                        id: "text_6_h",
+                        width: 500.,
+                        height: 350.,
+                        tab_order: 1,
+                        anchor: BottomRight,
+                        mouse_reactive: false,
+                    ),
+                    text: (
+                        text: "",
+                        font_size: 50.,
+                        color: (1.0, 0.65, 0., 1.0), // ffa500
+                        font: File("font/square.ttf", ("TTF", ())),
+                        line_mode: Wrap,
+                        align: BottomRight,
+                    )
+                ),
+            ]
+        ),
+    ],
+)

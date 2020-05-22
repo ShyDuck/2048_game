@@ -14,7 +14,7 @@ Container(
             transform: (
                 id: "container_score_text",
                 y: 400,
-                width: 755.,
+                width: 900.,
                 height: 100.,
                 anchor: Middle,
             ),
@@ -24,7 +24,7 @@ Container(
                 Label(
                     transform: (
                         id: "score",
-                        width: 750.,
+                        width: 900.,
                         height: 100.,
                         tab_order: 1,
                         anchor: Middle,
@@ -35,6 +35,72 @@ Container(
                         font_size: 75.,
                         color: (1.0, 0.65, 0., 1.0), 
                         font: File("font/square.ttf", ("TTF", ())),
+                    )
+                ),
+
+                // music Button
+                Button(
+                    transform: (
+                        id: "music",
+                        y: -700.,
+                        width: 128.,
+                        height: 64.,
+                        tab_order: 9,
+                        anchor: BottomLeft,
+                        mouse_reactive: true,
+                    ),
+                    button: (
+                        text: "music",
+                        font: File("font/square.ttf", ("TTF", ())),
+                        font_size: 20.,
+                        normal_text_color: (1.0, 0.65, 0., 1.0), // ffa500
+                        normal_image: SolidColor(0., 0., 0., 1.),
+                        hover_image: SolidColor(0.1, 0.1, 0.1, 1.),
+                        press_image: SolidColor(0.15, 0.15, 0.15, 1.),
+                    )
+                ),
+
+                // EndGame Button
+                Button(
+                    transform: (
+                        id: "end_game",
+                        y: -700.,
+                        width: 128.,
+                        height: 64.,
+                        tab_order: 9,
+                        anchor: BottomRight,
+                        mouse_reactive: true,
+                    ),
+                    button: (
+                        text: "END GAME",
+                        font: File("font/square.ttf", ("TTF", ())),
+                        font_size: 20.,
+                        normal_text_color: (1.0, 0.65, 0., 1.0), // ffa500
+                        normal_image: SolidColor(0., 0., 0., 1.),
+                        hover_image: SolidColor(0.1, 0.1, 0.1, 1.),
+                        press_image: SolidColor(0.15, 0.15, 0.15, 1.),
+                    )
+                ),
+
+                // RandomMap Button
+                Button(
+                    transform: (
+                        id: "random",
+                        y: -750.,
+                        width: 128.,
+                        height: 64.,
+                        tab_order: 9,
+                        anchor: Middle,
+                        mouse_reactive: true,
+                    ),
+                    button: (
+                        text: "RANDOM",
+                        font: File("font/square.ttf", ("TTF", ())),
+                        font_size: 20.,
+                        normal_text_color: (1.0, 0.65, 0., 1.0), // ffa500
+                        normal_image: SolidColor(0., 0., 0., 1.),
+                        hover_image: SolidColor(0.1, 0.1, 0.1, 1.),
+                        press_image: SolidColor(0.15, 0.15, 0.15, 1.),
                     )
                 ),
             ]

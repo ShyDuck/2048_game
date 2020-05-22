@@ -1,0 +1,80 @@
+(
+    hard_list: ([
+        (
+            name: "LOH",
+            score: 450,
+            hard: true,
+            size: Four,
+        ),
+        (
+            name: "Petya",
+            score: 30,
+            hard: true,
+            size: Four,
+        ),
+        (
+            name: "Vova",
+            score: 20,
+            hard: true,
+            size: Four,
+        ),
+    ], [
+        (
+            name: "CHECK_LOH",
+            score: 3962,
+            hard: true,
+            size: Six,
+        ),
+        (
+            name: "DEMA",
+            score: 406,
+            hard: true,
+            size: Six,
+        ),
+        (
+            name: "Pavel",
+            score: 300,
+            hard: true,
+            size: Six,
+        ),
+    ]),
+    easy_list: ([
+        (
+            name: "Ya Debil",
+            score: 8204,
+            hard: false,
+            size: Four,
+        ),
+        (
+            name: "Check",
+            score: 4200,
+            hard: false,
+            size: Four,
+        ),
+        (
+            name: "Check",
+            score: 4200,
+            hard: false,
+            size: Four,
+        ),
+    ], [
+        (
+            name: "lool",
+            score: 4200,
+            hard: false,
+            size: Six,
+        ),
+        (
+            name: "Andrey",
+            score: 4096,
+            hard: false,
+            size: Six,
+        ),
+        (
+            name: "Danil",
+            score: 2048,
+            hard: false,
+            size: Six,
+        ),
+    ]),
+)

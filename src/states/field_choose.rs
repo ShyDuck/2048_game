@@ -13,6 +13,8 @@ use amethyst::{
 
 use crate::states::exit;
 use crate::states::game;
+use crate::states::diffuculty;
+
 const BUTTON_4X4: &str = "4x4";
 const BUTTON_6X6: &str = "6x6";
 const BUTTON_BACK: &str = "back";
@@ -67,21 +69,26 @@ impl SimpleState for FieldChooseState{
                 target,
             }) => {
                 if Some(target) == self.button_4x4 {
-                    println!("[Trans::Switch] Switching to GameState, 4x4!");
+                    println!("[Trans::Push] Pushing to GameState, 4x4!");
                     let new_field : game::Field = game::Field{
+                        skip: false,
+                        hard : false,
+                        loose : false,
                         score: 0,
                         size: game::FieldSize::Four,
                         field_4: Some([[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 2]]),
                         field_6: None,
                     };
-                    std::fs::write("save.ron", ron::ser::to_string(&new_field).unwrap()).expect("some problem with writing new 4x4 field");
-                    return Trans::Switch(Box::new(game::GameState::default()));
+                    return Trans::Push(Box::new(diffuculty::DiffucultyState {field : new_field, ui_root : None, button_easy : None, button_hard : None}));
                 }
                 if Some(target) == self.button_6x6 {
-                    println!("[Trans::Switch] Switching to GameState, 6x6!");
+                    println!("[Trans::Push] Pushing to DiffucultyState, 6x6!");
                     let new_field : game::Field = game::Field{
+                        skip: false,
+                        hard : false,
+                        loose : false,
                         score: 0,
-                        size: game::FieldSize::Four,
+                        size: game::FieldSize::Six,
                         field_4: None,
                         field_6: Some([
                             [0, 0, 0, 0, 0, 0],
@@ -92,8 +99,8 @@ impl SimpleState for FieldChooseState{
                             [0, 0, 0, 0, 0, 2],
                         ]),
                     };
-                    std::fs::write("save.ron", ron::ser::to_string(&new_field).unwrap()).expect("some problem with writing new 6x6 field");
-                    return Trans::Switch(Box::new(game::GameState::default()));
+
+                    return Trans::Push(Box::new(diffuculty::DiffucultyState {field : new_field, ui_root : None, button_easy : None, button_hard : None}));
                 }
                 if Some(target) == self.button_back {
                     println!("[Trans::Pop] Returning to MainMenuState, button back!");
@@ -118,5 +125,13 @@ impl SimpleState for FieldChooseState{
         self.button_6x6 = None;
         self.button_back = None;
         
+    }
+
+    fn on_pause(&mut self,  data: StateData<'_, GameData<'_, '_>>){
+        self.on_stop(data);
+    }
+
+    fn on_resume(&mut self, data: StateData<'_, GameData<'_, '_>>){
+        self.on_start(data);
     }
 }

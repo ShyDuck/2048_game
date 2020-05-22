@@ -15,6 +15,7 @@ use amethyst::{
 use crate::states::field_choose;
 use crate::states::exit;
 use crate::states::game;
+use crate::states::leader;
 const BUTTON_START: &str = "start";
 const BUTTON_CONTINUE: &str = "continue";
 const BUTTON_LEADER_BOARD: &str = "leader_board";
@@ -30,10 +31,12 @@ pub struct MainMenuState{
     button_exit: Option<Entity>,
 }
 
+use crate::audio;
+
 impl SimpleState for MainMenuState{
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>){
         let world = data.world;
-
+        audio::initialise_audio(world);
         self.ui_root = 
             Some(world.exec(|mut creator: UiCreator<'_>| creator.create("ui/menu.ron", ())));
     }
@@ -82,8 +85,8 @@ impl SimpleState for MainMenuState{
                     return Trans::Switch(Box::new(game::GameState::default()));
                 }
                 if Some(target) == self.button_leader_board {
-                    println!("[Trans::Switch] Switching to LeaderBoardState!");
-                    return Trans::None;
+                    println!("[Trans::Push] Switching to LeaderBoardState!");
+                    return Trans::Push(Box::new(leader::LeaderState::default()));
                 }
                 if Some(target) == self.button_exit {
                     println!("[Trans::Push] MainState => ExitState, button exit");
