@@ -172,6 +172,7 @@ impl SimpleState for GameState {
                                 enter_button: None
                             }));
                         } else {
+                            self.field = Field::empty();
                             return Trans::Switch(Box::new(main_menu::MainMenuState::default()));
                         }
                     }
