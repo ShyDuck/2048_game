@@ -1,5 +1,7 @@
 # Unwanted files
 target
+save.ron
+leader.ron
 
 # Backup files
 .DS_Store

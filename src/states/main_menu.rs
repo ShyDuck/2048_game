@@ -16,6 +16,8 @@ use crate::states::field_choose;
 use crate::states::exit;
 use crate::states::game;
 use crate::states::leader;
+use crate::states::help;
+use crate::game_field::{Field, FieldSize};
 const BUTTON_START: &str = "start";
 const BUTTON_CONTINUE: &str = "continue";
 const BUTTON_LEADER_BOARD: &str = "leader_board";
@@ -67,6 +69,9 @@ impl SimpleState for MainMenuState{
                 if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Escape) {
                     println!("[Trans::Push] MainState => ExitState, esc or krestik");
                     return Trans::Push(Box::new(exit::ExitState::default()));
+                }else if is_key_down(&event, VirtualKeyCode::F1) {
+                    println!("[Trans::Push] MainState => HelpState, f1");
+                    return Trans::Push(Box::new(help::HelpState::default()));
                 }else {
                     Trans::None
                 }
@@ -81,8 +86,19 @@ impl SimpleState for MainMenuState{
                     return Trans::Push(Box::new(field_choose::FieldChooseState::default()));
                 }
                 if Some(target) == self.button_continue {
-                    println!("[Trans::Switch] Switching to GameState, LoadingGame!");
-                    return Trans::Switch(Box::new(game::GameState::default()));
+                    
+                    let field = Field::read("save.ron");
+                    match field.size{
+                        FieldSize::Four => {
+                            println!("[Trans::Switch] Switching to GameState, LoadingGame!");
+                            return Trans::Switch(Box::new(game::GameState::default()));
+                        }
+                        FieldSize::Six => {
+                            println!("[Trans::Switch] Switching to GameState, LoadingGame!");
+                            return Trans::Switch(Box::new(game::GameState::default()));
+                        }
+                        FieldSize::Empty => return Trans::None,
+                    }
                 }
                 if Some(target) == self.button_leader_board {
                     println!("[Trans::Push] Switching to LeaderBoardState!");

@@ -12,11 +12,12 @@ use amethyst::{
     ui::{UiCreator, UiFinder, UiText,  UiEvent, UiEventType,},
 };
 
+
 pub struct EndGameState {
     pub score: u32,
     pub name : String,
     pub hard: bool,
-    pub size: game::FieldSize,
+    pub size: FieldSize,
     pub ui_root: Option<Entity>,
     pub input: Option<Entity>,
     pub enter_button: Option<Entity>,
@@ -25,7 +26,7 @@ pub struct EndGameState {
 use crate::states::exit;
 use crate::states::main_menu;
 use crate::states::leader::{LeaderBoard, Leader};
-use crate::states::game;
+use crate::game_field::{Field, FieldSize};
 
 const ENTER_BUTTON: &str = "enter";
 const INPUT_NAME: &str = "input_name";
@@ -85,15 +86,7 @@ impl SimpleState for EndGameState{
                         //запись в файл
                         self.add_to_leader();
 
-                        let field: game::Field = game::Field {
-                            skip: false,
-                            hard: false,
-                            loose: false,
-                            score: 0,
-                            size: game::FieldSize::Four,
-                            field_4 : Some([[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 2],]),
-                            field_6 : None,
-                        };
+                        let field = Field::empty();
                         std::fs::write("save.ron", ron::ser::to_string_pretty(&field, ron::ser::PrettyConfig::default()).unwrap()).expect("cant load new save.ron, EndGameState");
                         return Trans::Switch(Box::new(main_menu::MainMenuState::default()));
                     }

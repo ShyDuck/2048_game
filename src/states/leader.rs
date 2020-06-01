@@ -12,7 +12,7 @@ use amethyst::{
 };
 
 use serde::{Deserialize, Serialize};
-use crate::states::game;
+use crate::game_field::{FieldSize};
 
 const TEXT_4E: &str = "text_4_e";
 const TEXT_4H: &str = "text_4_h";
@@ -113,7 +113,7 @@ pub struct Leader{
     pub name: String,
     pub score: u32,
     pub hard: bool,
-    pub size: game::FieldSize,
+    pub size: FieldSize,
 }
 
 #[derive( Default, Deserialize, Serialize, Debug)]
@@ -129,14 +129,16 @@ impl LeaderBoard{
         match leader.hard {
             false => {
                 match leader.size{
-                    game::FieldSize::Four => vector = &mut self.easy_list.0,
-                    game::FieldSize::Six => vector = &mut self.easy_list.1,
+                    FieldSize::Four => vector = &mut self.easy_list.0,
+                    FieldSize::Six => vector = &mut self.easy_list.1,
+                    FieldSize::Empty => unreachable!(),
                 }
             }
             true => {
                 match leader.size{
-                    game::FieldSize::Four => vector = &mut self.hard_list.0,
-                    game::FieldSize::Six => vector = &mut self.hard_list.1,
+                    FieldSize::Four => vector = &mut self.hard_list.0,
+                    FieldSize::Six => vector = &mut self.hard_list.1,
+                    FieldSize::Empty => unreachable!(),
                 }
             }
         }

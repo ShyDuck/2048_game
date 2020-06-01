@@ -12,7 +12,7 @@ use amethyst::{
 };
 
 use crate::states::exit;
-use crate::states::game;
+use crate::game_field::{Field, FieldSize};
 use crate::states::diffuculty;
 
 const BUTTON_4X4: &str = "4x4";
@@ -70,36 +70,12 @@ impl SimpleState for FieldChooseState{
             }) => {
                 if Some(target) == self.button_4x4 {
                     println!("[Trans::Push] Pushing to GameState, 4x4!");
-                    let new_field : game::Field = game::Field{
-                        skip: false,
-                        hard : false,
-                        loose : false,
-                        score: 0,
-                        size: game::FieldSize::Four,
-                        field_4: Some([[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 2]]),
-                        field_6: None,
-                    };
+                    let new_field = Field::default(FieldSize::Four);
                     return Trans::Push(Box::new(diffuculty::DiffucultyState {field : new_field, ui_root : None, button_easy : None, button_hard : None}));
                 }
                 if Some(target) == self.button_6x6 {
                     println!("[Trans::Push] Pushing to DiffucultyState, 6x6!");
-                    let new_field : game::Field = game::Field{
-                        skip: false,
-                        hard : false,
-                        loose : false,
-                        score: 0,
-                        size: game::FieldSize::Six,
-                        field_4: None,
-                        field_6: Some([
-                            [0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 2],
-                        ]),
-                    };
-
+                    let new_field = Field::default(FieldSize::Six);
                     return Trans::Push(Box::new(diffuculty::DiffucultyState {field : new_field, ui_root : None, button_easy : None, button_hard : None}));
                 }
                 if Some(target) == self.button_back {

@@ -10,7 +10,7 @@ use amethyst::{
     ui::{UiCreator, UiEvent, UiEventType, UiFinder},
     winit::VirtualKeyCode,
 };
-
+use crate::game_field::{Field};
 use crate::states::game;
 use crate::states::exit;
 
@@ -18,7 +18,7 @@ const BUTTON_HARD : &str = "hard";
 const BUTTON_EASY : &str = "easy";
 
 pub struct DiffucultyState{
-    pub field : game::Field,
+    pub field : Field,
     pub ui_root : Option<Entity>,
     pub button_hard : Option<Entity>,
     pub button_easy : Option<Entity>,

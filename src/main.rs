@@ -17,6 +17,7 @@ use amethyst::{
 
 use amethyst::audio::DjSystemDesc;
 pub mod audio;
+pub mod game_field;
 
 mod states;
 use states::main_menu::MainMenuState;

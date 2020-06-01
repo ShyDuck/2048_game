@@ -16,13 +16,11 @@ use amethyst::{
 };
 
 use std::fmt::{Debug};
+use crate::game_field::*;
 use crate::states::exit;
 use crate::states::pause_menu;
 use crate::states::end_game;
 use crate::states::main_menu;
-use serde::{Deserialize, Serialize};
-use std::fs;
-use ron;
 
 
 
@@ -32,29 +30,6 @@ const HEIGTH : f32 = 950.0;
 const BUTTON_MUSIC: &str = "music";
 const BUTTON_END_GAME: &str = "end_game";
 const BUTTON_RANDOM: &str = "random";
-
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub enum FieldSize{
-    Four,
-    Six,
-}
-
-impl Default for FieldSize{
-    fn default() -> FieldSize{
-        FieldSize::Four
-    }
-}
-
-#[derive( Default, Deserialize, Serialize, Debug)]
-pub struct Field{
-    pub skip: bool,
-    pub hard: bool,
-    pub loose: bool,
-    pub score: u32,
-    pub size: FieldSize,
-    pub field_4 : Option<[[u32; 4]; 4]>,
-    pub field_6 : Option<[[u32; 6]; 6]>,
-}
 
 #[derive(Default, Debug)]
 pub struct GameState{
@@ -104,7 +79,7 @@ impl SimpleState for GameState {
     }
 
     fn on_pause(&mut self, data: StateData<'_, GameData<'_, '_>>){
-        self.write_to_save();
+        self.field.save("save.ron");
 
         if let Some(root_entity) = self.ui_root {
             data.world
@@ -120,7 +95,7 @@ impl SimpleState for GameState {
     }
 
     fn on_resume(&mut self, data: StateData<'_, GameData<'_, '_>>){
-        self.read_from_save();
+        self.field = Field::read("save.ron");
 
         match self.field.field_4 {
             Some(_) => self.initialize_field_4(data.world),
@@ -132,12 +107,18 @@ impl SimpleState for GameState {
     }
 
     fn on_stop(&mut self, data: StateData<'_, GameData<'_, '_>>){
-        match self.field.field_4{
-            Some(_) => self.write_to_save(),
-            None => match self.field.field_6{
-                Some(_) => self.write_to_save(),
-                None => (),
-            },
+        match self.field.size {
+            FieldSize::Four => { 
+                if self.field.field_4.is_some() {
+                    self.field.save("save.ron");
+                }
+            }
+            FieldSize::Six =>{ 
+                if self.field.field_6.is_some() {
+                    self.field.save("save.ron");
+                }
+            }
+            FieldSize::Empty => self.field.save("save.ron"),
         }
 
         if let Some(root_entity) = self.ui_root {
@@ -218,6 +199,7 @@ impl SimpleState for GameState {
                             enter_button: None
                         }));
                     } else {
+                        self.field = Field::empty();
                         return Trans::Switch(Box::new(main_menu::MainMenuState::default()));
                     }
                 }if Some(target) == self.button_music {
@@ -252,19 +234,6 @@ impl GameState{
 
     }
 
-    fn read_from_save(&mut self){
-
-        let input_str = fs::read_to_string("save.ron").expect("cant open a save.ron");
-        self.field  = ron::de::from_str(&input_str).unwrap();
-    }
-
-    fn write_to_save(&mut self){   
-        let ron_str = ron::ser::to_string_pretty(&self.field, ron::ser::PrettyConfig::default()).unwrap();
-        fs::write("save.ron", ron_str).expect("DONT WRITE BLYADINA");
-        self.field.field_4 = None;
-        self.field.field_6 = None;
-    }
-    
     fn remove_entities(&mut self, world: &mut World){
         for entity in self.entities.iter(){
             world.delete_entity(*entity).expect("НЕ СМОГ УДАЛИТЬ КАРТИНКУ");
@@ -336,7 +305,7 @@ impl GameState{
 
     
     fn initialize(&mut self, world: &mut World){
-        self.read_from_save();
+        self.field = Field::read("save.ron");
         self.ui_root = Some(world.exec(|mut creator: UiCreator<'_>| creator.create("ui/game.ron", ())));
         initialize_camera(world);
         if self.field.loose{
@@ -477,286 +446,4 @@ fn load_sprite_sheet_6(world: &mut World) -> Handle<SpriteSheet> {
 }
 
 
-
-enum Usermove{
-    Left,
-    Right,
-    Up,
-    Down,
-}
-
-fn do_game_step_6(step : &Usermove, field:&mut [[u32; 6]; 6]){
-    match *step {
-        Usermove::Left =>{
-            for array in field{
-                for  col in 0..6 {
-                    for testcol in (col+1)..6 {
-                        if array[testcol] != 0 {
-                            if array[col] == 0 {
-                                array[col] += array[testcol];
-                                array[testcol] = 0;
-                            }
-                            else if array[col] == array[testcol] {
-                                array[col] += array[testcol];
-                                array[testcol] = 0;
-                                break;
-                            } else {
-                                break
-                            }
-                        }
-                    }
-                }
-            }
-        } ,
-        Usermove::Right=>{
-            for array in field{
-                for  col in (0..6).rev() {
-                    for testcol in (0..col).rev() {
-                        if array[testcol] != 0 {
-                            if array[col] == 0 {
-                                array[col] += array[testcol];
-                                array[testcol] = 0;
-                            }
-                            else if array[col] == array[testcol] {
-                                array[col] += array[testcol];
-                                array[testcol] = 0;
-                                break;
-                            }else {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        } ,
-        Usermove::Down   =>{
-            for col in 0..6 {
-                for row in (0..6).rev() {
-                    for testrow in (0..row).rev() {
-                        if field[testrow][col] != 0 {
-                            if field[row][col] == 0 {
-                                field[row][col] += field[testrow][col];
-                                field[testrow][col] = 0;
-                            } else if field[row][col] == field[testrow][col] {
-                                field[row][col] += field[testrow][col];
-                                field[testrow][col] = 0;
-                                break;
-                            }else {
-                                break;
-                            }
- 
-                        }
-                    }
-                }
-            }
-        } ,
-        Usermove::Up =>{
-            for col in 0..6 {
-                for row in 0..6{
-                    for testrow in (row+1)..6 {
-                        if field[testrow][col] != 0 {
-                            if field[row][col] == 0 {
-                                field[row][col] += field[testrow][col];
-                                field[testrow][col] = 0;
-                            } else if field[row][col] == field[testrow][col] {
-                                field[row][col] += field[testrow][col];
-                                field[testrow][col] = 0;
-                                break;
-                            }else {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        },
-    }
-}
-
-fn do_game_step_4(step : &Usermove, field:&mut [[u32; 4]; 4]){
-
-    match *step {
-        Usermove::Left =>{
-            for array in field{
-                for  col in 0..4 {
-                    for testcol in (col+1)..4 {
-                        if array[testcol] != 0 {
-                            if array[col] == 0 {
-                                array[col] += array[testcol];
-                                array[testcol] = 0;
-                            }
-                            else if array[col] == array[testcol] {
-                                array[col] += array[testcol];
-                                array[testcol] = 0;
-                                break;
-                            } else {
-                                break
-                            }
-                        }
-                    }
-                }
-            }
-        } ,
-        Usermove::Right=>{
-            for array in field{
-                for  col in (0..4).rev() {
-                    for testcol in (0..col).rev() {
-                        if array[testcol] != 0 {
-                            if array[col] == 0 {
-                                array[col] += array[testcol];
-                                array[testcol] = 0;
-                            }
-                            else if array[col] == array[testcol] {
-                                array[col] += array[testcol];
-                                array[testcol] = 0;
-                                break;
-                            }else {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        } ,
-        Usermove::Down   =>{
-            for col in 0..4 {
-                for row in (0..4).rev() {
-                    for testrow in (0..row).rev() {
-                        if field[testrow][col] != 0 {
-                            if field[row][col] == 0 {
-                                field[row][col] += field[testrow][col];
-                                field[testrow][col] = 0;
-                            } else if field[row][col] == field[testrow][col] {
-                                field[row][col] += field[testrow][col];
-                                field[testrow][col] = 0;
-                                break;
-                            }else {
-                                break;
-                            }
- 
-                        }
-                    }
-                }
-            }
-        } ,
-        Usermove::Up =>{
-            for col in 0..4 {
-                for row in 0..4{
-                    for testrow in (row+1)..4 {
-                        if field[testrow][col] != 0 {
-                            if field[row][col] == 0 {
-                                field[row][col] += field[testrow][col];
-                                field[testrow][col] = 0;
-                            } else if field[row][col] == field[testrow][col] {
-                                field[row][col] += field[testrow][col];
-                                field[testrow][col] = 0;
-                                break;
-                            }else {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        },
-    }
-}
-
-fn spawn_6( field: &mut  [[u32;6];6]){
-    
-    let mut count = 0;
-    'spawn_loop : loop{
-        let x = rand::random::<usize>();
-        if field[x % 6][(x/6)%6] == 0 {
-            field[x % 6][(x/6)%6]= 2;
-            break;
-        }
-        count +=1;
-        if count > 100 {
-            for i in 0..6 {
-                for j in 0..6{
-                    if field[i][j] == 0 {
-                        count = 0;
-                        continue 'spawn_loop;
-                    }
-                }
-            }
-            break;
-        }
-    }
-}
-
-fn spawn_4( field: &mut  [[u32;4];4]){
-   
-    let mut count = 0;
-    'spawn_loop : loop{
-        let x = rand::random::<usize>();
-        if field[x % 4][(x/4)%4] == 0 {
-            field[x % 4][(x/4)%4]= 2;
-            break;
-        }
-        count +=1;
-        if count > 100 {
-            for i in 0..4 {
-                for j in 0..4{
-                    if field[i][j] == 0 {
-                        count = 0;
-                        continue 'spawn_loop;
-                    }
-                }
-            }
-            break;
-        }
-    }
-}
-
-//check did u loose or not
-fn test_6(field: &mut [[u32;6];6]) -> bool{
-    let mut test=field.clone();
-    
-    for i in [Usermove::Up,Usermove::Down,Usermove::Left,Usermove::Right].iter(){
-        do_game_step_6(i, &mut test);
-        if test != *field{
-            return true;
-        }
-    }
-    return false;
-}
-
-//check did u loose or not
-fn test_4(field: &mut [[u32;4];4]) -> bool{
-    let mut test=field.clone();
-    
-    for i in [Usermove::Up,Usermove::Down,Usermove::Left,Usermove::Right].iter(){
-        do_game_step_4(i, &mut test);
-        if test != *field{
-            return true;
-        }
-    }
-    return false;
-}
-
-//calculate score on 4x4 field
-fn calc_score_4(field: &mut [[u32;4];4]) -> u32{
-    
-    let mut score = 0;
-    for i in 0..4{
-        for j in 0..4{
-            score += field[i][j];
-        }
-    }
-    return score;
-}
-
-//calculate score on 6x6 field
-fn calc_score_6(field: &mut [[u32;6];6]) -> u32{
-    
-    let mut score = 0;
-    for i in 0..6{
-        for j in 0..6{
-            score += field[i][j];
-        }
-    }
-    return score;
-}
 
