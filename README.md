@@ -2,11 +2,10 @@
 
 ## How to run
 
-To run the game, run the following command, which defaults to the `vulkan` graphics backend:
+Чтобы собрать игру нужно ввести данную ниже команду (cargo можно установить с rustup.rs):
 
 ```bash
 cargo run --release
 ```
-( в debug сборке лагает звук, поэтому придется собирать релизную =( )
-( rustup.rs - отсюда можно установить cargo)
+( в debug сборке лагает звук, поэтому придется собирать релизную =()
 
