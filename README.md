@@ -5,17 +5,8 @@
 To run the game, run the following command, which defaults to the `vulkan` graphics backend:
 
 ```bash
-cargo run
+cargo run --release
 ```
+( в debug сборке лагает звук, поэтому придется собирать релизную =( )
+( rustup.rs - отсюда можно установить cargo)
 
-Windows and Linux users may explicitly choose `"vulkan"` with the following command:
-
-```bash
-cargo run --no-default-features --features "vulkan"
-```
-
-Mac OS X users may explicitly choose `"metal"` with the following command:
-
-```bash
-cargo run --no-default-features --features "metal"
-```
