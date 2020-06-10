@@ -47,7 +47,7 @@ impl Field {
                     hard : false,
                     loose : false,
                     score : 0,
-                    size : FieldSize::Four,
+                    size : FieldSize::Six,
                     field_4: None,
                     field_6: Some([
                         [0,0,0,0,0,0],
@@ -88,7 +88,6 @@ impl Field {
 }
 
 
-
 pub enum Usermove{
     Left,
     Right,
@@ -96,6 +95,7 @@ pub enum Usermove{
     Down,
 }
 
+//game turn logick for 6x6 field
 pub fn do_game_step_6(step : &Usermove, field:&mut [[u32; 6]; 6]){
     match *step {
         Usermove::Left =>{
@@ -184,6 +184,7 @@ pub fn do_game_step_6(step : &Usermove, field:&mut [[u32; 6]; 6]){
     }
 }
 
+//game turn logick for 4x4 field
 pub fn do_game_step_4(step : &Usermove, field:&mut [[u32; 4]; 4]){
 
     match *step {
@@ -273,6 +274,7 @@ pub fn do_game_step_4(step : &Usermove, field:&mut [[u32; 4]; 4]){
     }
 }
 
+//spawn new 2 in 6x6 field
 pub fn spawn_6( field: &mut  [[u32;6];6]){
     
     let mut count = 0;
@@ -297,6 +299,7 @@ pub fn spawn_6( field: &mut  [[u32;6];6]){
     }
 }
 
+//spawn new 2 in 4x4 field
 pub fn spawn_4( field: &mut  [[u32;4];4]){
    
     let mut count = 0;

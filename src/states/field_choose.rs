@@ -15,6 +15,8 @@ use crate::states::exit;
 use crate::game_field::{Field, FieldSize};
 use crate::states::diffuculty;
 
+
+//this state ask user for size of game field
 const BUTTON_4X4: &str = "4x4";
 const BUTTON_6X6: &str = "6x6";
 const BUTTON_BACK: &str = "back";

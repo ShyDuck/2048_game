@@ -17,7 +17,8 @@ pub struct  HelpState {
     button_back : Option<Entity>,
 }
 
-
+//You can acces To this state in menu by pressing f1
+//Its useless
 impl SimpleState for HelpState {
 
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>){

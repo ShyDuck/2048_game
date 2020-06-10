@@ -13,6 +13,7 @@ use amethyst::{
     ui::{UiCreator, UiFinder, UiText, UiEvent, UiEventType},
     renderer::*,
     core::transform::Transform,
+    audio::{AudioSink},
 };
 
 use std::fmt::{Debug};
@@ -23,13 +24,12 @@ use crate::states::end_game;
 use crate::states::main_menu;
 
 
-
-
 const WIDTH : f32 = 1200.0;
 const HEIGTH : f32 = 950.0;
 const BUTTON_MUSIC: &str = "music";
 const BUTTON_END_GAME: &str = "end_game";
 const BUTTON_RANDOM: &str = "random";
+
 
 #[derive(Default, Debug)]
 pub struct GameState{
@@ -49,9 +49,9 @@ impl SimpleState for GameState {
     
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>){
        self.initialize(data.world);
-       println!("{:?}", self.field);
+       println!("Field: {:?}", self.field);
     }
-
+    
     fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans{
         let StateData{world, ..} = data;
         match self.ui_score{
@@ -77,7 +77,7 @@ impl SimpleState for GameState {
         
         Trans::None
     }
-
+    
     fn on_pause(&mut self, data: StateData<'_, GameData<'_, '_>>){
         self.field.save("save.ron");
 
@@ -107,6 +107,7 @@ impl SimpleState for GameState {
     }
 
     fn on_stop(&mut self, data: StateData<'_, GameData<'_, '_>>){
+       //saving fields
         match self.field.size {
             FieldSize::Four => { 
                 if self.field.field_4.is_some() {
@@ -121,6 +122,7 @@ impl SimpleState for GameState {
             FieldSize::Empty => self.field.save("save.ron"),
         }
 
+        //deleting all ui elements
         if let Some(root_entity) = self.ui_root {
             data.world
                 .delete_entity(root_entity)
@@ -138,13 +140,16 @@ impl SimpleState for GameState {
         let user_move :Usermove;
         match event {
             StateEvent::Window(event) => {
+                // krestik pressed => Exit
                 if is_close_requested(&event) {
                     println!("[Trans::Push] GameState => ExitState, krestik");
                     return Trans::Push(Box::new(exit::ExitState::default()));
-                }else if is_key_down(&event, VirtualKeyCode::Escape) {
+                }//If pressed esc => Pause Menu
+                else if is_key_down(&event, VirtualKeyCode::Escape) {
                     println!("[Trans::Push] From GameState to PauseMenu");
                     return Trans::Push(Box::new(pause_menu::PauseMenuState::default()));
-                }else if is_key_down(&event, VirtualKeyCode::Right) {
+                }//process game input RIGHT UP LEFT DOWN ARROWS
+                else if is_key_down(&event, VirtualKeyCode::Right) {
                     println!("[Trans::None] Right");
                     user_move = Usermove::Right;
                    
@@ -159,7 +164,8 @@ impl SimpleState for GameState {
                 }else if is_key_down(&event, VirtualKeyCode::Down) {
                     println!("[Trans::None] Down");
                     user_move = Usermove::Down;
-                }else if is_key_down(&event, VirtualKeyCode::Return){
+                }//If pressed return, and we loose => EndGame
+                else if is_key_down(&event, VirtualKeyCode::Return){
                     if self.field.loose {
                         if !self.field.skip {
                             return Trans::Push(Box::new(end_game::EndGameState {
@@ -177,6 +183,44 @@ impl SimpleState for GameState {
                         }
                     }
                     return Trans::None;
+                }//make music louder
+                else if is_key_down(&event, VirtualKeyCode::PageDown) {
+                    let mut sink = data.world.write_resource::<AudioSink>();
+                    let volume = sink.volume();
+                    if volume < 0.01 {
+                        sink.set_volume(0.0);
+                    } else {
+                        sink.set_volume(volume -0.01);
+                    }
+                    println!("make music tishe: {}", volume -0.01);
+                    return Trans::None;
+                }//make music tishe
+                else if is_key_down(&event, VirtualKeyCode::PageUp) {
+                    let mut sink = data.world.write_resource::<AudioSink>();
+                    let volume = sink.volume();
+                    if volume > 0.99 {
+                        sink.set_volume(1.0);
+                    } else {
+                        sink.set_volume(volume + 0.01);
+                    }
+                    println!("make music louder: {}", volume +0.01);
+                    return Trans::None;
+                }else if is_key_down(&event, VirtualKeyCode::W)
+                    ||is_key_down(&event, VirtualKeyCode::A) 
+                    ||is_key_down(&event, VirtualKeyCode::S) 
+                    ||is_key_down(&event, VirtualKeyCode::D){
+                    match self.field.size{
+                        FieldSize::Four =>{
+                            self.sprite_sheet_handle.replace(load_sprite_sheet(data.world, "texture/6_1.png", "texture/6.ron"));
+                            self.draw_4(data.world, self.field.field_4.unwrap());
+                        }
+                        FieldSize::Six =>{
+                            self.sprite_sheet_handle.replace(load_sprite_sheet(data.world, "texture/6_1.png", "texture/6.ron"));
+                            self.draw_6(data.world, self.field.field_6.unwrap());
+                        }
+                        FieldSize::Empty => unreachable!("BAD BAD BAD BAD"),
+                    }
+                    return Trans::None;
                 }else {
                     return Trans::None;
                 }
@@ -184,10 +228,12 @@ impl SimpleState for GameState {
                 return Trans::None;
             }
 
+            //processing UIEvents 
             StateEvent::Ui(UiEvent {
                 event_type: UiEventType::Click,
                 target,
             }) => {
+                //  //draw sprites in game field, by using sprie sheet
                 if Some(target) == self.button_end {
                     if !self.field.skip {
                         return Trans::Push(Box::new(end_game::EndGameState {
@@ -203,10 +249,14 @@ impl SimpleState for GameState {
                         self.field = Field::empty();
                         return Trans::Switch(Box::new(main_menu::MainMenuState::default()));
                     }
-                }if Some(target) == self.button_music {
-                    println!("PLAY MUSCIC!");
+                }//processing music button
+                if Some(target) == self.button_music {
+                    println!("NOT IMPLEMENTED, ТУПОЙ РАСТ НЕ РАБОТАЕТ НИЧЕГО, ПОТОМ ПЕРЕДЕЛАЮ, МБЫ ДРУГУЮ ЛИБУ ПОДРУБЛЮ");
+                    //unimplemented
+                    //NO DOCUMENTATION ON AMETHYST_AUDIO AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
                     return Trans::None;
-                }if Some(target) == self.button_random {
+                }//processing random button (generate new random field)
+                if Some(target) == self.button_random {
                     println!("RANDOM OUR FIELD!");
                     self.random(data.world);
                     return Trans::None;
@@ -215,10 +265,7 @@ impl SimpleState for GameState {
             }
             _ => return Trans::None,
         }
-        
     }
-
-    
 }
 
 impl GameState{
@@ -235,6 +282,7 @@ impl GameState{
 
     }
 
+    //remove old game field
     fn remove_entities(&mut self, world: &mut World){
         for entity in self.entities.iter(){
             world.delete_entity(*entity).expect("НЕ СМОГ УДАЛИТЬ КАРТИНКУ");
@@ -242,6 +290,7 @@ impl GameState{
         self.entities = Vec::<Entity>::new();
     }
 
+     //draw sprites in game field, by using sprie sheet
     fn initialize_field_4(&mut self, world: &mut World){
         
         let array = self.field.field_4.unwrap();
@@ -267,6 +316,7 @@ impl GameState{
         }
     }
 
+    //draw sprites in game field, by using sprie sheet
     fn initialize_field_6(&mut self, world: &mut World){
         
         let array = self.field.field_6.unwrap();
@@ -292,19 +342,21 @@ impl GameState{
         }
     }
 
+     //redraw game field 4x4 (delete previous field and draw new one)
     fn draw_4(&mut self, world: &mut World, array: [[u32;4];4]){
         self.remove_entities(world);
         self.field.field_4.replace(array);
         self.initialize_field_4(world);
     }
 
+    //redraw game field 6x6 (delete previous field and draw new one)
     fn draw_6(&mut self, world: &mut World, array: [[u32;6];6]){
         self.remove_entities(world);
         self.field.field_6.replace(array);
         self.initialize_field_6(world);
     }
 
-    
+    //initialize everythink
     fn initialize(&mut self, world: &mut World){
         self.field = Field::read("save.ron");
         self.ui_root = Some(world.exec(|mut creator: UiCreator<'_>| creator.create("ui/game.ron", ())));
@@ -316,12 +368,12 @@ impl GameState{
         }
         match self.field.field_4 {
             Some(_) => {
-                self.sprite_sheet_handle.replace(load_sprite_sheet_4(world));
+                self.sprite_sheet_handle.replace(load_sprite_sheet(world, "texture/4_0.png", "texture/4.ron"));
                 self.initialize_field_4(world);
                 self.field.score = calc_score_4(&mut self.field.field_4.unwrap());
             }
             None => {
-                self.sprite_sheet_handle.replace(load_sprite_sheet_6(world));
+                self.sprite_sheet_handle.replace(load_sprite_sheet(world, "texture/6_0.png", "texture/6.ron"));
                 self.initialize_field_6(world);
                 self.field.score = calc_score_6(&mut self.field.field_6.unwrap());
             }
@@ -378,7 +430,7 @@ impl GameState{
 }
 
 
-
+// fn : 2^n -> n
 fn power_of_2(mut i : u32) -> u32{
     if i == 0 {
          return 0;
@@ -391,6 +443,7 @@ fn power_of_2(mut i : u32) -> u32{
     return counter;
 }
 
+//initialize game camera, for sprites
 fn initialize_camera(world : &mut World){
     let mut transform = Transform::default();
     transform.set_translation_xyz(0.0, 0.0, 1.0);
@@ -402,14 +455,13 @@ fn initialize_camera(world : &mut World){
         .build();
 }
 
-
-
-fn load_sprite_sheet_4(world: &mut World) -> Handle<SpriteSheet> {
+//loads sprite sheet from assets/texture/4_0.ron for 4x4 game field
+fn load_sprite_sheet(world: &mut World, file_name: &str, sprite_sheet_name: &str) -> Handle<SpriteSheet> {
     let texture_handle = {
         let loader = world.read_resource::<Loader>();
         let texture_storage = world.read_resource::<AssetStorage<Texture>>();
         loader.load(
-            "texture/4_0.png",
+            file_name,
             ImageFormat::default(),
             (),
             &texture_storage,
@@ -418,33 +470,14 @@ fn load_sprite_sheet_4(world: &mut World) -> Handle<SpriteSheet> {
     let loader = world.read_resource::<Loader>();
     let sprite_sheet_store = world.read_resource::<AssetStorage<SpriteSheet>>();
     loader.load(
-        "texture/4_0.ron",
+        sprite_sheet_name,
         SpriteSheetFormat(texture_handle),
         (),
         &sprite_sheet_store,
     )
 }
 
-fn load_sprite_sheet_6(world: &mut World) -> Handle<SpriteSheet> {
-    let texture_handle = {
-        let loader = world.read_resource::<Loader>();
-        let texture_storage = world.read_resource::<AssetStorage<Texture>>();
-        loader.load(
-            "texture/6_0.png",
-            ImageFormat::default(),
-            (),
-            &texture_storage,
-        )
-    };
-    let loader = world.read_resource::<Loader>();
-    let sprite_sheet_store = world.read_resource::<AssetStorage<SpriteSheet>>();
-    loader.load(
-        "texture/6_0.ron",
-        SpriteSheetFormat(texture_handle),
-        (),
-        &sprite_sheet_store,
-    )
-}
+
 
 
 

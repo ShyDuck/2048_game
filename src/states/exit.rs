@@ -11,8 +11,7 @@ use amethyst::{
     winit::VirtualKeyCode,
 };
 
-// make autosave on exit
-//coooooooool
+//This State asks user for exit confirmation
 const BUTTON_YES: &str = "yes";
 const BUTTON_NO: &str = "no";
 

@@ -83,11 +83,10 @@ impl SimpleState for EndGameState{
                         return Trans::None;
                     } else{
                         println!("[Trans::Switch] From EndGameState => MainMenuState, button_enter!");
-                        //запись в файл
+                        
                         self.add_to_leader();
 
-                        let field = Field::empty();
-                        std::fs::write("save.ron", ron::ser::to_string_pretty(&field, ron::ser::PrettyConfig::default()).unwrap()).expect("cant load new save.ron, EndGameState");
+                        Field::empty().save("save.ron");
                         return Trans::Switch(Box::new(main_menu::MainMenuState::default()));
                     }
                 }
@@ -111,6 +110,7 @@ impl SimpleState for EndGameState{
 
 
 impl EndGameState {
+    //gets strign from text block
     fn set_name(&mut self, world: &mut World){
         let (b, mut c): (Entities, WriteStorage<UiText>) = world.system_data();
             for (entity, text) in (&b, &mut c).join(){
@@ -120,6 +120,7 @@ impl EndGameState {
             }
     }
 
+    //adds to leader board, 
     fn add_to_leader(&mut self){
         let ron_str = std::fs::read_to_string("leader.ron").expect("Cant read leader.ron from EndGameState");
         let mut leader_board : LeaderBoard = ron::de::from_str(&ron_str).expect("Some triuble with leader.ron, EndGameState");

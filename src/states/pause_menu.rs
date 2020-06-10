@@ -9,11 +9,15 @@ use amethyst::{
     ecs::prelude::*,
     ui::{UiCreator, UiEvent, UiEventType, UiFinder},
     winit::VirtualKeyCode,
+    audio::{AudioSink},
 };
 
 use crate::states::exit;
 use crate::states::field_choose;
 use crate::states::main_menu;
+
+//I tak ponyatno chto on delaet
+//Prosto pause menu
 
 const BUTTON_RETURN: &str = "return";
 const BUTTON_NEW_GAME: &str = "new_game";
@@ -80,7 +84,7 @@ pub struct PauseMenuState{
         Trans::None
      }
 
-     fn handle_event(&mut self, _data: StateData<'_, GameData<'_, '_>>, event: StateEvent) -> SimpleTrans{
+     fn handle_event(&mut self, data: StateData<'_, GameData<'_, '_>>, event: StateEvent) -> SimpleTrans{
         match event{
             StateEvent::Window(event) => {
                 if is_close_requested(&event) {
@@ -89,6 +93,27 @@ pub struct PauseMenuState{
                 }else if is_key_down(&event, VirtualKeyCode::Escape){
                     println!("[Trans::Pop] From PauseMenuState => GameState, esc");
                     return Trans::Pop;
+                }else if is_key_down(&event, VirtualKeyCode::PageDown) {
+                   
+                    let mut sink = data.world.write_resource::<AudioSink>();
+                    let volume = sink.volume();
+                    if volume < 0.01 {
+                        sink.set_volume(0.0);
+                    } else {
+                        sink.set_volume(volume -0.01);
+                    }
+                    println!("make music tishe: {}", volume -0.01);
+                    return Trans::None;
+                }else if is_key_down(&event, VirtualKeyCode::PageUp) {
+                    let mut sink = data.world.write_resource::<AudioSink>();
+                    let volume = sink.volume();
+                    if volume > 0.99 {
+                        sink.set_volume(1.0);
+                    } else {
+                        sink.set_volume(volume + 0.01);
+                    }
+                    println!("make music louder: {}", volume +0.01);
+                    return Trans::None;
                 }else {
                     return Trans::None;
                 }

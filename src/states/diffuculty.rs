@@ -17,6 +17,8 @@ use crate::states::exit;
 const BUTTON_HARD : &str = "hard";
 const BUTTON_EASY : &str = "easy";
 
+
+//state where player choose difuculty
 pub struct DiffucultyState{
     pub field : Field,
     pub ui_root : Option<Entity>,
@@ -27,6 +29,7 @@ pub struct DiffucultyState{
 impl SimpleState for DiffucultyState{
 
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>){
+        //initialising ui
         self.ui_root = Some(data.world.exec(|mut creator: UiCreator| creator.create("ui/diffuculty.ron", ())));
     }
 
@@ -43,7 +46,6 @@ impl SimpleState for DiffucultyState{
     }
 
     fn handle_event(&mut self, _data: StateData<'_, GameData<'_, '_>>, event: StateEvent) -> SimpleTrans{
-
         match event {
             StateEvent::Window(event) => {
                 if is_close_requested(&event) {

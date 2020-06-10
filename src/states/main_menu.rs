@@ -10,6 +10,7 @@ use amethyst::{
     ecs::prelude::*,
     ui::{UiCreator, UiEvent, UiEventType, UiFinder},
     winit::VirtualKeyCode,
+    audio::{AudioSink},
 };
 
 use crate::states::field_choose;
@@ -18,6 +19,8 @@ use crate::states::game;
 use crate::states::leader;
 use crate::states::help;
 use crate::game_field::{Field, FieldSize};
+
+//This State represent main menu
 const BUTTON_START: &str = "start";
 const BUTTON_CONTINUE: &str = "continue";
 const BUTTON_LEADER_BOARD: &str = "leader_board";
@@ -60,8 +63,7 @@ impl SimpleState for MainMenuState{
         Trans::None
     }
     
-
-    fn handle_event(&mut self, _data: StateData<'_, GameData<'_, '_>>, event: StateEvent) -> SimpleTrans{
+    fn handle_event(&mut self, data: StateData<'_, GameData<'_, '_>>, event: StateEvent) -> SimpleTrans{
 
 
         match event {
@@ -72,6 +74,27 @@ impl SimpleState for MainMenuState{
                 }else if is_key_down(&event, VirtualKeyCode::F1) {
                     println!("[Trans::Push] MainState => HelpState, f1");
                     return Trans::Push(Box::new(help::HelpState::default()));
+                }else if is_key_down(&event, VirtualKeyCode::PageDown) {
+                    println!("make music tishe");
+                    let mut sink = data.world.write_resource::<AudioSink>();
+                    let volume = sink.volume();
+                    if volume < 0.01 {
+                        sink.set_volume(0.0);
+                    } else {
+                        sink.set_volume(volume -0.01);
+                    }
+                    println!("make music tishe: {}", volume -0.01);
+                    return Trans::None;
+                }else if is_key_down(&event, VirtualKeyCode::PageUp) {
+                    let mut sink = data.world.write_resource::<AudioSink>();
+                    let volume = sink.volume();
+                    if volume > 0.99 {
+                        sink.set_volume(1.0);
+                    } else {
+                        sink.set_volume(volume + 0.01);
+                    }
+                    println!("make music louder: {}", volume +0.01);
+                    return Trans::None;
                 }else {
                     Trans::None
                 }

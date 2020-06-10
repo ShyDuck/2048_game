@@ -2,8 +2,8 @@
     skip: false,
     hard: false,
     loose: false,
-    score: 0,
-    size: Empty,
+    score: 192,
+    size: Six,
     field_4: None,
-    field_6: None,
+    field_6: Some(((0, 0, 0, 0, 0, 0), (0, 0, 2, 0, 0, 4), (0, 0, 0, 0, 0, 8), (0, 0, 0, 0, 4, 16), (0, 2, 4, 8, 16, 2), (2, 4, 8, 32, 64, 16))),
 )

@@ -9,11 +9,16 @@ use amethyst::{
     input::{is_key_down},
     ui::{UiCreator, UiFinder, UiText},
     winit::VirtualKeyCode,
+    audio::{AudioSink},
 };
 
 use serde::{Deserialize, Serialize};
 use crate::game_field::{FieldSize};
 
+
+//Prints Leader board list
+//TO_DO: Make it not ugly
+//Denis: I tak norm
 const TEXT_4E: &str = "text_4_e";
 const TEXT_4H: &str = "text_4_h";
 const TEXT_6E: &str = "text_6_e";
@@ -93,13 +98,34 @@ impl SimpleState for LeaderState{
         Trans::None
     }
 
-    fn handle_event(&mut self, _data: StateData<'_, GameData<'_, '_>>, event: StateEvent) -> SimpleTrans{
+    fn handle_event(&mut self, data: StateData<'_, GameData<'_, '_>>, event: StateEvent) -> SimpleTrans{
         match event {
             StateEvent::Window(event) => {
                 if is_key_down(&event, VirtualKeyCode::Escape) {
                     println!("[Trans::Pop] pressed esc in LeaderBoard!");
                     return Trans::Pop;
                 } 
+                else if is_key_down(&event, VirtualKeyCode::PageDown) {
+                    let mut sink = data.world.write_resource::<AudioSink>();
+                    let volume = sink.volume();
+                    if volume < 0.01 {
+                        sink.set_volume(0.0);
+                    } else {
+                        sink.set_volume(volume -0.01);
+                    }
+                    println!("make music tishe: {}", volume -0.01);
+                    return Trans::None;
+                }else if is_key_down(&event, VirtualKeyCode::PageUp) {
+                    let mut sink = data.world.write_resource::<AudioSink>();
+                    let volume = sink.volume();
+                    if volume > 0.99 {
+                        sink.set_volume(1.0);
+                    } else {
+                        sink.set_volume(volume + 0.01);
+                    }
+                    println!("make music louder: {}", volume +0.01);
+                    return Trans::None;
+                }
             }
             _ => (),
         }

@@ -1,5 +1,3 @@
-
-
 use amethyst::{
     assets::HotReloadBundle,
     core::transform::TransformBundle,
